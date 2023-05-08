@@ -92,7 +92,7 @@ Note that password is marked with `[SecretSetting]` and it will be protected. Af
 }
 ```
 
-Default implementation for `ISecretProtector` uses `Microsoft.AspNetCore.DataProtection`. 
+Default implementation for `ISecretProtector` uses [Microsoft.AspNetCore.DataProtection](https://www.nuget.org/packages/Microsoft.AspNetCore.DataProtection/). 
 You can also provide your own implementation:
 
 ```c#
