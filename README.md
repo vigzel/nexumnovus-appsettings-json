@@ -47,7 +47,7 @@ app.MapPost("/emailSettings", async (EmailSettings emailSettings, ISettingsRepos
 
 // Api's to get and update generic top-level setting
 app.MapGet("/settings", (string section, IConfiguration settings) => settings.GetSection(section));
-app.MapPost("/settings", async (string topLevelSection, object value, ISettingsRepository settingsRepo)
+app.MapPost("/settings", async (string topLevelSection, string value, ISettingsRepository settingsRepo)
   => await settingsRepo.UpdateSettingsAsync(topLevelSection, value)
 );
 
