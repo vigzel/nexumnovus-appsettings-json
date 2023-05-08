@@ -35,7 +35,7 @@ public class JsonSettingsRepository_Tests
       File.WriteAllText(TestFilePath, jsonString);
 
       // Act
-      await _sut.UpdateSettingsAsync("Name", "New Name").ConfigureAwait(false);
+      await _sut.UpdateSettingsAsync("name", "New Name").ConfigureAwait(false); // key should be case-insensitive
 
       // Assert
       var result = File.ReadAllText(TestFilePath);

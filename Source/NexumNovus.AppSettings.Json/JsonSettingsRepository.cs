@@ -39,7 +39,9 @@ public class JsonSettingsRepository : ISettingsRepository
     var path = _source.Path!;
 
     var appSettingsJson = File.ReadAllText(path);
-    var appSettingsDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(appSettingsJson)!;
+    var tmpDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(appSettingsJson) ?? new Dictionary<string, object>();
+    var appSettingsDict = new Dictionary<string, object>(tmpDict, StringComparer.OrdinalIgnoreCase);
+
     if (appSettingsDict.ContainsKey(name))
     {
       appSettingsDict[name] = settings;
