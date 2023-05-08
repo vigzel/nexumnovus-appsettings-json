@@ -16,16 +16,16 @@ public static class JsonConfigurationExtensions
   /// <param name="path">Path relative to the base path stored in
   /// <see cref="IHostBuilder.Properties"/> of <paramref name="builder"/>).</param>
   /// <param name="optional">Whether the file is optional.</param>
-  /// <param name="reloadOnChange">Whether the configuration should be reloaded if the file changes.</param>
+  /// <param name="reloadOnChange">Whether the configuration should be reloaded if the file changes. Default is true.</param>
   /// <returns>The <see cref="IHostBuilder"/>.</returns>
-  public static IHostBuilder UseJsonConfig(this IHostBuilder builder, string path, bool optional = false, bool reloadOnChange = false)
+  public static IHostBuilder AddJsonConfig(this IHostBuilder builder, string path, bool optional = false, bool reloadOnChange = true)
   {
     if (string.IsNullOrEmpty(path))
     {
       throw new ArgumentException("Path to json config file is required.", nameof(path));
     }
 
-    return builder.UseJsonConfig(s =>
+    return builder.AddJsonConfig(s =>
     {
       s.Path = path;
       s.Optional = optional;
@@ -40,7 +40,7 @@ public static class JsonConfigurationExtensions
   /// <param name="builder">The <see cref="IHostBuilder"/> to add to.</param>
   /// <param name="configureSource">Configures the source.</param>
   /// <returns>The <see cref="IHostBuilder"/>.</returns>
-  public static IHostBuilder UseJsonConfig(this IHostBuilder builder, Action<JsonConfigurationSource> configureSource)
+  public static IHostBuilder AddJsonConfig(this IHostBuilder builder, Action<JsonConfigurationSource> configureSource)
   {
     if (builder == null)
     {
