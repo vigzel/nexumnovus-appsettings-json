@@ -10,8 +10,8 @@
 ### About
 
 JSON configuration provider implementation for [Microsoft.Extensions.Configuration](https://www.nuget.org/packages/Microsoft.Extensions.Configuration/). This package enables you to 
- - read your application's settings from a JSON file. 
- - update your top-level application's settings and save changes to a JSON file. 
+ - read application's settings from a JSON file. 
+ - update application's settings and save changes to a JSON file. 
  - cryptographically protect settings
 
 Use `JsonConfigurationExtensions.AddJsonConfig` extension method on `IHostBuilder` to add the JSON configuration provider to the configuration builder and register `JsonSettingsRepository` with service collection.
@@ -45,10 +45,10 @@ app.MapPost("/emailSettings", async (EmailSettings emailSettings, ISettingsRepos
   => await settingsRepo.UpdateSettingsAsync(EmailSettings.ConfigElement, emailSettings)
 );
 
-// Api's to get and update generic top-level setting
+// Api's to get and update setting
 app.MapGet("/settings", (string section, IConfiguration settings) => settings.GetSection(section));
-app.MapPost("/settings", async (string topLevelSection, string value, ISettingsRepository settingsRepo)
-  => await settingsRepo.UpdateSettingsAsync(topLevelSection, value)
+app.MapPost("/settings", async (string section, string value, ISettingsRepository settingsRepo)
+  => await settingsRepo.UpdateSettingsAsync(section, value)
 );
 
 app.Run();
@@ -76,8 +76,7 @@ To run this example, include an `appsettings.json` file with the following con
 }
 ```
 
-Only top-level settings can be updated. Top level settings in this example are "Region" and "Email".
-If top-level setting is not found in the configuration file, then it's created.
+If a setting is not found in the configuration file, then it's created.
 
 Note that password is marked with `[SecretSetting]` and it will be protected. After update `appsettings.json` will look like: 
 

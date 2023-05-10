@@ -1,11 +1,12 @@
 namespace NexumNovus.AppSettings.Json;
 
-using Newtonsoft.Json;
+using System.IO;
 using NexumNovus.AppSettings.Common;
+using NexumNovus.AppSettings.Common.Secure;
 using NexumNovus.AppSettings.Common.Utils;
 
 /// <summary>
-/// Used to update top-level settings in appsettings.json file.
+/// Used to update settings in appsettings.json file.
 /// </summary>
 public class JsonSettingsRepository : ISettingsRepository
 {
@@ -18,41 +19,32 @@ public class JsonSettingsRepository : ISettingsRepository
   public JsonSettingsRepository(JsonConfigurationSource source) => _source = source;
 
   /// <summary>
-  /// Adds or updates top-level setting in json settings file.
-  ///
-  /// Top-level settings are top-most settings:
-  /// {
-  ///   "topSetting1": "demo",
-  ///   "topSetting2": {
-  ///     "name": "demo",
-  ///     "types": [ "A", "B" ]
-  ///   },
-  /// }
-  ///
-  /// You can update "topSetting1" and "topSetting2", but wouldn't be able to update just the "topSetting2:name".
+  /// Adds or updates setting in json settings file.
   /// </summary>
-  /// <param name="name">Name of the top-level setting.</param>
+  /// <param name="name">Name or section of the setting.</param>
   /// <param name="settings">New setting object.</param>
   /// <returns>Task.</returns>
   public async Task UpdateSettingsAsync(string name, object settings)
   {
-    var path = _source.Path!;
+    var newSettings = AppSettingsParser.Flatten(settings, name, SecretAttributeAction.MarkWithStarAndProtect, _source.Protector);
+    var settingsData = AppSettingsParser.Parse(_source.Path!);
 
-    var appSettingsJson = File.ReadAllText(path);
-    var tmpDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(appSettingsJson) ?? new Dictionary<string, object>();
-    var appSettingsDict = new Dictionary<string, object>(tmpDict, StringComparer.OrdinalIgnoreCase);
+    var keysToRemove = settingsData
+      .Where(x => x.Key.StartsWith($"{name}:") || x.Key.Equals(name, StringComparison.OrdinalIgnoreCase))
+      .Select(x => x.Key);
 
-    if (appSettingsDict.ContainsKey(name))
+    foreach (var key in keysToRemove)
     {
-      appSettingsDict[name] = settings;
-    }
-    else
-    {
-      appSettingsDict.Add(name, settings);
+      settingsData.Remove(key);
     }
 
-    appSettingsJson = AppSettingsParser.SerializeObject(appSettingsDict, _source.Protector);
-    File.WriteAllText(path, appSettingsJson);
+    foreach (var (key, value) in newSettings)
+    {
+      settingsData.Add(key, value);
+    }
+
+    var newJson = AppSettingsParser.ConvertSettingsDictionaryToJson(settingsData);
+    File.WriteAllText(_source.Path!, newJson);
 
     if (_source.ReloadOnChange)
     {

@@ -41,8 +41,8 @@ public class JsonSettingsRepository_Tests
       var result = File.ReadAllText(TestFilePath);
       result.Should().Be(
 @"{
-  ""Name"": ""New Name"",
-  ""Age"": 25
+  ""name"": ""New Name"",
+  ""Age"": ""25""
 }");
     }
     finally
@@ -106,7 +106,7 @@ public class JsonSettingsRepository_Tests
       result.Should().Be(
 @"{
   ""Name"": ""test name"",
-  ""Age"": 25
+  ""Age"": ""25""
 }");
     }
     finally
@@ -157,9 +157,45 @@ public class JsonSettingsRepository_Tests
       ""B""
     ],
     ""Data"": {
-      ""A"": 1,
-      ""B"": 2
+      ""A"": ""1"",
+      ""B"": ""2""
     }
+  }
+}");
+    }
+    finally
+    {
+      File.Delete(TestFilePath);
+    }
+  }
+
+  [Fact]
+  public async Task Should_Update_Nested_Json_Property_Async()
+  {
+    try
+    {
+      // Arrange
+      var jsonString =
+@"{
+  ""Person"": {
+    ""name"": ""Old Name"",
+    ""NameMiddle"": ""Middle Name"",
+    ""Age"": ""25""
+  }
+}";
+      File.WriteAllText(TestFilePath, jsonString);
+
+      // Act
+      await _sut.UpdateSettingsAsync("Person:Name", "New Name").ConfigureAwait(false); // key should be case-insensitive
+
+      // Assert
+      var result = File.ReadAllText(TestFilePath);
+      result.Should().Be(
+@"{
+  ""Person"": {
+    ""Name"": ""New Name"",
+    ""NameMiddle"": ""Middle Name"",
+    ""Age"": ""25""
   }
 }");
     }
