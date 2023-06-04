@@ -26,25 +26,40 @@ public class JsonSettingsRepository : ISettingsRepository
   /// <returns>Task.</returns>
   public async Task UpdateSettingsAsync(string name, object settings)
   {
-    var newSettings = AppSettingsParser.Flatten(settings, name, SecretAttributeAction.MarkWithStarAndProtect, _source.Protector);
-    var settingsData = AppSettingsParser.Parse(_source.Path!);
-
-    var keysToRemove = settingsData
-      .Where(x => x.Key.StartsWith($"{name}:") || x.Key.Equals(name, StringComparison.OrdinalIgnoreCase))
-      .Select(x => x.Key);
-
-    foreach (var key in keysToRemove)
+    var file = _source.FileProvider?.GetFileInfo(_source.Path ?? string.Empty);
+    var filePath = file?.PhysicalPath ?? _source.Path;
+    if (string.IsNullOrWhiteSpace(filePath))
     {
-      settingsData.Remove(key);
+      throw new FileNotFoundException("Undefined settings file path!");
     }
 
-    foreach (var (key, value) in newSettings)
+    var newSettings = AppSettingsParser.Flatten(settings, name, SecretAttributeAction.MarkWithStarAndProtect, _source.Protector);
+    IDictionary<string, string?> settingsData;
+    if (File.Exists(filePath))
     {
-      settingsData.Add(key, value);
+      settingsData = AppSettingsParser.Parse(filePath);
+
+      var keysToRemove = settingsData
+        .Where(x => x.Key.StartsWith($"{name}:") || x.Key.Equals(name, StringComparison.OrdinalIgnoreCase))
+        .Select(x => x.Key);
+
+      foreach (var key in keysToRemove)
+      {
+        settingsData.Remove(key);
+      }
+
+      foreach (var (key, value) in newSettings)
+      {
+        settingsData.Add(key, value);
+      }
+    }
+    else
+    {
+      settingsData = newSettings;
     }
 
     var newJson = AppSettingsParser.ConvertSettingsDictionaryToJson(settingsData);
-    File.WriteAllText(_source.Path!, newJson);
+    File.WriteAllText(filePath, newJson);
 
     if (_source.ReloadOnChange)
     {
