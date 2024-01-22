@@ -8,15 +8,13 @@ using NexumNovus.AppSettings.Common.Utils;
 /// <summary>
 /// Used to update settings in appsettings.json file.
 /// </summary>
-public class JsonSettingsRepository : ISettingsRepository
+/// <remarks>
+/// Initializes a new instance of the <see cref="JsonSettingsRepository"/> class.
+/// </remarks>
+/// <param name="source">The source settings.</param>
+public class JsonSettingsRepository(JsonConfigurationSource source) : ISettingsRepository
 {
-  private readonly JsonConfigurationSource _source;
-
-  /// <summary>
-  /// Initializes a new instance of the <see cref="JsonSettingsRepository"/> class.
-  /// </summary>
-  /// <param name="source">The source settings.</param>
-  public JsonSettingsRepository(JsonConfigurationSource source) => _source = source;
+  private readonly JsonConfigurationSource _source = source;
 
   /// <summary>
   /// Adds or updates setting in json settings file.

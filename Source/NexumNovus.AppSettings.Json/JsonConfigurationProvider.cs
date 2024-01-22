@@ -8,16 +8,13 @@ using NexumNovus.AppSettings.Common.Utils;
 /// <summary>
 /// A JSON file based <see cref="FileConfigurationProvider"/>.
 /// </summary>
-public class JsonConfigurationProvider : FileConfigurationProvider
+/// <remarks>
+/// Initializes a new instance of the <see cref="JsonConfigurationProvider"/> class.
+/// </remarks>
+/// <param name="source">The source settings.</param>
+public class JsonConfigurationProvider(JsonConfigurationSource source) : FileConfigurationProvider(source)
 {
-  private readonly JsonConfigurationSource _config;
-
-  /// <summary>
-  /// Initializes a new instance of the <see cref="JsonConfigurationProvider"/> class.
-  /// </summary>
-  /// <param name="source">The source settings.</param>
-  public JsonConfigurationProvider(JsonConfigurationSource source)
-    : base(source) => _config = source;
+  private readonly JsonConfigurationSource _config = source;
 
   /// <summary>
   /// Loads the JSON data from a stream.
@@ -31,7 +28,7 @@ public class JsonConfigurationProvider : FileConfigurationProvider
     {
       var settings = AppSettingsParser.Parse(stream);
 
-      var encryptedSettings = settings.Keys.Where(x => x.EndsWith("*")).ToList();
+      var encryptedSettings = settings.Keys.Where(x => x.EndsWith('*')).ToList();
 
       foreach (var key in encryptedSettings)
       {

@@ -42,10 +42,7 @@ public static class JsonConfigurationExtensions
   /// <returns>The <see cref="IHostBuilder"/>.</returns>
   public static IHostBuilder AddJsonConfig(this IHostBuilder builder, Action<JsonConfigurationSource> configureSource)
   {
-    if (builder == null)
-    {
-      throw new ArgumentNullException(nameof(builder));
-    }
+    ArgumentNullException.ThrowIfNull(builder);
 
     var source = new JsonConfigurationSource();
     configureSource?.Invoke(source);
