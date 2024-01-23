@@ -11,3 +11,6 @@ V1
 1:1,NexumNovus.AppSettings.Json,,b_,V2_
 2:.ctor,m
 2:source,N
+2:Should_Update_Json_Property_Async,M
+2:jsonString,v
+2:result,x

@@ -35,7 +35,7 @@ public class JsonSettingsRepository_Tests
       File.WriteAllText(TestFilePath, jsonString);
 
       // Act
-      await _sut.UpdateSettingsAsync("name", "New Name").ConfigureAwait(false); // key should be case-insensitive
+      await _sut.UpdateSettingsAsync("name", "New Name"); // key should be case-insensitive
 
       // Assert
       var result = File.ReadAllText(TestFilePath);
@@ -67,7 +67,7 @@ public class JsonSettingsRepository_Tests
       File.WriteAllText(TestFilePath, jsonString);
 
       // Act
-      await _sut.UpdateSettingsAsync("Letters", new string[] { "A", "B", "C" }).ConfigureAwait(false);
+      await _sut.UpdateSettingsAsync("Letters", new string[] { "A", "B", "C" });
 
       // Assert
       var result = File.ReadAllText(TestFilePath);
@@ -99,7 +99,7 @@ public class JsonSettingsRepository_Tests
       File.WriteAllText(TestFilePath, jsonString);
 
       // Act
-      await _sut.UpdateSettingsAsync("Age", 25).ConfigureAwait(false);
+      await _sut.UpdateSettingsAsync("Age", 25);
 
       // Assert
       var result = File.ReadAllText(TestFilePath);
@@ -142,7 +142,7 @@ public class JsonSettingsRepository_Tests
       };
 
       // Act
-      await _sut.UpdateSettingsAsync("Child", newChild).ConfigureAwait(false);
+      await _sut.UpdateSettingsAsync("Child", newChild);
 
       // Assert
       var result = File.ReadAllText(TestFilePath);
@@ -186,7 +186,7 @@ public class JsonSettingsRepository_Tests
       File.WriteAllText(TestFilePath, jsonString);
 
       // Act
-      await _sut.UpdateSettingsAsync("Person:Name", "New Name").ConfigureAwait(false); // key should be case-insensitive
+      await _sut.UpdateSettingsAsync("Person:Name", "New Name"); // key should be case-insensitive
 
       // Assert
       var result = File.ReadAllText(TestFilePath);
